@@ -154,10 +154,20 @@ startBtn.addEventListener("click", () => {
 
 function playTone(frequency, duration) {
   const oscillator = audioContext.createOscillator();
-  oscillator.type = "sine"; // You can choose other types like 'square' or 'triangle'
-  oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-  oscillator.connect(audioContext.destination);
+  const gainNode = audioContext.createGain(); 
+
+  oscillator.type = "sine"; //triangle or square can also be used
+  oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime); // Set frequency
+  oscillator.connect(gainNode); 
+  gainNode.connect(audioContext.destination); 
+
   oscillator.start();
+
+  gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+  gainNode.gain.linearRampToValueAtTime(
+    0,
+    audioContext.currentTime + duration / 1000
+  );
   setTimeout(() => oscillator.stop(), duration);
 }
 
@@ -175,7 +185,7 @@ function drawMetronome(interval, startTime) {
     updateGraphBeats();
     updateGraphBPM();
 
-    playTone(440, 100); // Plays a 440Hz tone for 100ms
+    playTone(440, 150); // Plays a 440Hz tone for 100ms
   }, interval);
 }
 
