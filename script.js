@@ -93,6 +93,8 @@ const chartBPM = new Chart(ctxBPM, {
 // Update BPM display
 bpmSlider.addEventListener("input", () => {
   bpmValue.textContent = bpmSlider.value;
+  bpmInput.value = bpmSlider.value; // Update input field
+
   // If metronome is running, restart with the new BPM
   if (intervalId) {
     clearInterval(intervalId);
@@ -100,11 +102,6 @@ bpmSlider.addEventListener("input", () => {
     const interval = 60000 / bpm;
     drawMetronome(interval, startTime);
   }
-});
-
-bpmSlider.addEventListener("input", () => {
-  bpmValue.textContent = bpmSlider.value;
-  bpmInput.value = bpmSlider.value; // Update input field
 });
 
 // Update slider and BPM value when typing in the input field
@@ -115,6 +112,14 @@ bpmInput.addEventListener("input", () => {
   if (!isNaN(value) && value >= 40 && value <= 200) {
     bpmSlider.value = value; // Update slider position
     bpmValue.textContent = value; // Update BPM label
+
+    // If metronome is running, restart with the new BPM
+    if (intervalId) {
+      clearInterval(intervalId);
+      const bpm = bpmInput.value;
+      const interval = 60000 / bpm;
+      drawMetronome(interval, startTime);
+    }
   } else if (value === "") {
     bpmSlider.value = 60; // Reset if input is empty
     bpmValue.textContent = 60;
